@@ -1,12 +1,11 @@
 class Router {
   int [] graphColor;
   int [] slider;
-  int cantidadDeCanales;
   float [] result;
   float[] valorViejo;
   float[] valor;
+  int cantidadDeCanales;
   boolean record;
-  float [][] recordButton;
   Chart [] grafico;
   Chart [] graficoZoom;
   Router(int cantidadDeCanales) {
@@ -56,7 +55,6 @@ class Router {
     pushStyle();
     fill(80);
     noStroke();
-    rect(width/2, 0, width/6, height);
     fill(255);
     rect(width/2+width/8, 0, width/2, height);
     this.grabar(width/2+width/6, height/3, width/50);
@@ -101,8 +99,8 @@ class Router {
   }
   void graficosZoom(int canal) {
     this.graficoZoom[canal] = cp5.addChart("graficoZoom"+canal)
-      .setPosition(width/2+cantidadDeCanales, height/cantidadDeCanales*canal+cantidadDeCanales)
-      .setSize(width/12, width/12)
+      .setPosition(width/3, height/cantidadDeCanales*canal+cantidadDeCanales)
+      .setSize(width/4, width/12)
       .setRange(0, 1000000)
       .setView(Chart.LINE)
       .setStrokeWeight(1.5)
@@ -114,10 +112,10 @@ class Router {
   void modulosOSC(int canal) {
     pushMatrix();
     stroke(255);
-    text("Recibido: ", width/10, height/cantidadDeCanales*canal+height/7);
+    text("Recibido: ", cantidadDeCanales, height/cantidadDeCanales*canal+height/7);
     text(valor[canal], cantidadDeCanales, height/cantidadDeCanales*canal+height/6);
     text("Zoom: ", width/3+cantidadDeCanales, height/cantidadDeCanales*canal+height/7);
-    text(result[canal], width/2+cantidadDeCanales, height/cantidadDeCanales*canal+height/6);
+    text(result[canal], width/3+cantidadDeCanales, height/cantidadDeCanales*canal+height/6);
     if (valor[canal] >= 0.1) {
       fill(0, 255, 0, 255);
       square(width/12, height/cantidadDeCanales*canal+height/7, width/48);
@@ -127,32 +125,32 @@ class Router {
   void sliderDeZoom(int canal) {
     cp5.addSlider("zoom"+canal)
       .setPosition(width/12+(cantidadDeCanales*2), height/cantidadDeCanales*canal+height/48)
-      .setSize(width/3, 10)
+      .setSize(width/6, 10)
       .setRange(1, 1000000)
       ;
   }
   void campoDeTexto(int canal) {
     cp5.addTextfield("canalIn"+canal)
-      .setPosition(width/6, height/cantidadDeCanales*canal+height/6)
-      .setSize(width/6, height/cantidadDeCanales/5)
-      .setFont(createFont("arial", 14))
+      .setPosition(width/9, height/cantidadDeCanales*canal+height/6)
+      .setSize(width/6, height/cantidadDeCanales/10)
+      .setFont(createFont("arial", 12))
       .setAutoClear(false)
       ;
     cp5.addTextfield("titulo"+canal)
-      .setPosition(width/6, height/cantidadDeCanales*canal+height/12)
-      .setSize(width/6, height/cantidadDeCanales/5)
-      .setFont(createFont("arial", 14))
+      .setPosition(width/9, height/cantidadDeCanales*canal+height/12)
+      .setSize(width/6, height/cantidadDeCanales/10)
+      .setFont(createFont("arial", 12))
       .setAutoClear(false)
       ;
   }
   void botonGrabar(float posX, float posY, float tam) {
-    rect(posX-tam, posY-tam, width/3-tam, tam*2);
+    rect(posX-tam, posY-tam*2, width/3-tam, tam*4);
   }
   void grabando() {
     if (dist(width/2+width/6, height/3, mouseX, mouseY) < width/50) {
       record = !record;
       if (record) {
-        sessionName = d+"_"+mo+"_"+y+"-"+h+"_"+m+"_"+s+"_"+ds+"_"+cs+"_"+ms;
+        sessionName = d+"_"+mo+"_"+y+"-"+h+"_"+min+"_"+s+"_"+ds+"_"+cs+"_"+ms;
       }
     }
   }
@@ -164,8 +162,8 @@ class Router {
     if (record) {
       fill(220, 0, 0);
       square(posX-tam/2, posY-tam/2, tam);
-      text("Grabando: /sessions/"+ sessionName, posX + tam, posY);
-    } else {   
+      text("Grabando: "+d+"_"+mo+"_"+y+"...", posX + tam, posY);
+    } else {
       fill(60, 0, 0);
       circle(posX, posY, tam);
       text("Grabar", posX + tam, posY);
@@ -185,7 +183,7 @@ class Router {
       newRow.setFloat("v2", this.result[1]);
       newRow.setFloat("v3", this.result[2]);
       newRow.setFloat("v4", this.result[3]);
-      saveTable(table, "data/sesions/"+sessionName+".csv");
+      saveTable(table, "data/sessions/"+sessionName+".csv");
     }
   }
 }
